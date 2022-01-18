@@ -13,7 +13,7 @@ import simpledb.server.SimpleDB;
  * your changes to the SimpleDB source code.
  */
 
-public class StudentMajorNoJDBC {
+public class StudentMajor {
    public static void main(String[] args) {
       try {
          // analogous to the driver
