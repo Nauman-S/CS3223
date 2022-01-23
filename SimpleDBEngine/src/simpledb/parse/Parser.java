@@ -16,7 +16,7 @@ public class Parser {
       lex = new Lexer(s);
    }
    
-// Methods for parsing predicates, terms, expressions, constants, and fields
+// Methods for parsing predicates, terms, expressions, constants, fields and operators
    
    public String field() {
       return lex.eatId();
@@ -38,9 +38,9 @@ public class Parser {
    
    public Term term() {
       Expression lhs = expression();
-      lex.eatDelim('=');
+      Operator operator = lex.eatOpr();
       Expression rhs = expression();
-      return new Term(lhs, rhs);
+      return new Term(lhs, rhs,operator);
    }
    
    public Predicate predicate() {

@@ -1,6 +1,9 @@
 package simpledb.parse;
 
 import java.util.*;
+
+import simpledb.query.Operator;
+
 import java.io.*;
 
 /**
@@ -121,6 +124,44 @@ public class Lexer {
       if (!matchKeyword(w))
          throw new BadSyntaxException();
       nextToken();
+   }
+   
+/**
+ * Identifies and returns the comparison operator used and moves on to the next token.
+ * Otherwise throws an exception
+ * @return the operator that has been identified
+ */
+   public Operator eatOpr() {
+	   if (matchDelim('<')) {
+		   eatDelim('<');
+		   if (matchDelim('=')) {
+			   eatDelim('=');
+			   return new Operator(1);
+		   }else if(matchDelim('>')) {
+			   eatDelim('>');
+			   return new Operator(2);
+		   }else {
+			   return new Operator(3);
+		   }
+		   
+	   }else if(matchDelim('>')) {
+		   eatDelim('>');
+		   if(matchDelim('=')) {
+			   eatDelim('=');
+			   return new Operator(4);
+		   }else {
+			   return new Operator(5);
+		   }
+		   
+	   }else if(matchDelim('!')) {
+		   eatDelim('!');
+		   eatDelim('=');
+		   return new Operator(2);
+		   
+	   }else {
+		   eatDelim('=');
+		   return new Operator(6);
+	   }
    }
    
    /**

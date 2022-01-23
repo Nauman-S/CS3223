@@ -10,29 +10,40 @@ import simpledb.record.*;
  */
 public class Term {
    private Expression lhs, rhs;
+   private Operator op;
    
    /**
     * Create a new term that compares two expressions
-    * for equality.
+    * with the given operator
     * @param lhs  the LHS expression
     * @param rhs  the RHS expression
+    * @param Operator the operator
     */
-   public Term(Expression lhs, Expression rhs) {
+   public Term(Expression lhs, Expression rhs, Operator op) {
       this.lhs = lhs;
       this.rhs = rhs;
+      this.op = op;
    }
    
    /**
-    * Return true if both of the term's expressions
-    * evaluate to the same constant,
-    * with respect to the specified scan.
+    * Evaluates both expressions,
+    * with respect to the specified scan
+    * and determines if the condition is satisfied.
     * @param s the scan
-    * @return true if both expressions have the same value in the scan
+    * @return true if lhs op rhs evaluates to true
     */
    public boolean isSatisfied(Scan s) {
       Constant lhsval = lhs.evaluate(s);
       Constant rhsval = rhs.evaluate(s);
-      return rhsval.equals(lhsval);
+      
+      int i = lhsval.compareTo(rhsval);
+      if (i==0) {
+    	  return op.i == Operator.EQUAL_TO || op.i == Operator.LESS_THAN_AND_EQUAL_TO || op.i == Operator.GREATER_THAN_AND_EQUAL_TO;
+      }else if (i<0) {
+    	  return op.i == Operator.LESS_THAN_AND_EQUAL_TO || op.i == Operator.LESS_THAN || op.i==Operator.NOT_EQUAL;
+      } else {
+    	  return op.i == Operator.GREATER_THAN_AND_EQUAL_TO || op.i== Operator.GREATER_THAN || op.i==Operator.NOT_EQUAL;
+      }
    }
    
    /**
