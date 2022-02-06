@@ -4,6 +4,7 @@ import static java.sql.Types.INTEGER;
 import simpledb.tx.Transaction;
 import simpledb.record.*;
 import simpledb.index.Index;
+import simpledb.index.IndexType;
 import simpledb.index.hash.HashIndex; 
 import simpledb.index.btree.BTreeIndex; //in case we change to btree indexing
 
@@ -18,6 +19,7 @@ import simpledb.index.btree.BTreeIndex; //in case we change to btree indexing
  */
 public class IndexInfo {
    private String idxname, fldname;
+   private IndexType idxType;
    private Transaction tx;
    private Schema tblSchema;
    private Layout idxLayout;
@@ -31,10 +33,11 @@ public class IndexInfo {
     * @param tblSchema the schema of the table
     * @param si the statistics for the table
     */
-   public IndexInfo(String idxname, String fldname, Schema tblSchema,
+   public IndexInfo(String idxname, String fldname, IndexType idxType, Schema tblSchema,
                     Transaction tx,  StatInfo si) {
       this.idxname = idxname;
       this.fldname = fldname;
+      this.idxType = idxType;
       this.tx = tx;
       this.tblSchema = tblSchema;
       this.idxLayout = createIdxLayout();
@@ -46,8 +49,8 @@ public class IndexInfo {
     * @return the Index object associated with this information
     */
    public Index open() {
-      return new HashIndex(tx, idxname, idxLayout);
-//    return new BTreeIndex(tx, idxname, idxLayout);
+	   
+      return idxType == IndexType.BTREE ? new BTreeIndex(tx, idxname, idxLayout) : new HashIndex(tx, idxname, idxLayout);
    }
    
    /**
@@ -64,8 +67,7 @@ public class IndexInfo {
    public int blocksAccessed() {
       int rpb = tx.blockSize() / idxLayout.slotSize();
       int numblocks = si.recordsOutput() / rpb;
-      return HashIndex.searchCost(numblocks, rpb);
-//    return BTreeIndex.searchCost(numblocks, rpb);
+      return idxType == IndexType.BTREE ? BTreeIndex.searchCost(numblocks, rpb) : HashIndex.searchCost(numblocks, rpb);
    }
    
    /**

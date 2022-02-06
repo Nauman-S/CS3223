@@ -6,6 +6,7 @@ import static java.sql.Types.INTEGER;
 import java.util.Map;
 
 import simpledb.tx.Transaction;
+import simpledb.index.IndexType;
 import simpledb.record.*;
 
 public class MetadataMgrTest {
@@ -57,8 +58,8 @@ public class MetadataMgrTest {
       System.out.println("View def = " + v);
 
       // Part 4: Index Metadata
-      mdm.createIndex("indexA", "MyTable", "A", tx);
-      mdm.createIndex("indexB", "MyTable", "B", tx);
+      mdm.createIndex("indexA", "MyTable", IndexType.HASH,"A", tx);
+      mdm.createIndex("indexB", "MyTable", IndexType.HASH,"B", tx);
       Map<String,IndexInfo> idxmap = mdm.getIndexInfo("MyTable", tx);
          
       IndexInfo ii = idxmap.get("A");

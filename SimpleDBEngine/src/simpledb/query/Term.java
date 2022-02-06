@@ -86,6 +86,9 @@ public class Term {
     * @return either the constant or null
     */
    public Constant equatesWithConstant(String fldname) {
+	   if (op.i != Operator.EQUAL_TO) {
+		   return null;
+	   }
       if (lhs.isFieldName() &&
           lhs.asFieldName().equals(fldname) &&
           !rhs.isFieldName())
@@ -107,6 +110,9 @@ public class Term {
     * @return either the name of the other field, or null
     */
    public String equatesWithField(String fldname) {
+	   if (op.i != Operator.EQUAL_TO) {
+		   return null;
+	   }
       if (lhs.isFieldName() &&
           lhs.asFieldName().equals(fldname) &&
           rhs.isFieldName())

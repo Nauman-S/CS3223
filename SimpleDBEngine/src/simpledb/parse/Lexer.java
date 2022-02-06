@@ -2,6 +2,7 @@ package simpledb.parse;
 
 import java.util.*;
 
+import simpledb.index.IndexType;
 import simpledb.query.Operator;
 
 import java.io.*;
@@ -163,6 +164,28 @@ public class Lexer {
 		   return new Operator(6);
 	   }
    }
+   
+   /**
+    * Returns true if the current token is a legal index type.
+    * @return true if the current token is an index type.
+    */
+   public boolean matchIdxType() {
+      Collection<String> operators = Arrays.asList(IndexType.HASH.toString().toLowerCase(), IndexType.BTREE.toString().toLowerCase());
+      return tok.ttype==StreamTokenizer.TT_WORD && operators.contains(tok.sval);
+   }
+   
+   /**
+    * Throws an exception if the current index Type is unidentifiable
+    * Otherwise, moves to the next token.
+    * @return the enum of the current index Type identified
+    */
+   public IndexType eatIdxType() {
+	      if (!matchIdxType())
+	         throw new BadSyntaxException();
+	      String s = tok.sval;
+	      nextToken();
+	      return IndexType.valueOf(s.toUpperCase());
+	   }
    
    /**
     * Throws an exception if the current token is not 

@@ -2,6 +2,7 @@ package simpledb.parse;
 
 import java.util.*;
 
+import simpledb.index.IndexType;
 import simpledb.query.*;
 import simpledb.record.*;
 
@@ -240,6 +241,12 @@ public class Parser {
       lex.eatDelim('(');
       String fldname = field();
       lex.eatDelim(')');
+      
+      if (lex.matchKeyword("using")) {
+          lex.eatKeyword("using");
+          IndexType idxType = lex.eatIdxType();
+          return new CreateIndexData(idxname,tblname, idxType, fldname);
+       }
       return new CreateIndexData(idxname, tblname, fldname);
    }
 }
