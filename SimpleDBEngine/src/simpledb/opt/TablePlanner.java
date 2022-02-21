@@ -67,8 +67,8 @@ class TablePlanner {
 		if (joinpred == null)
 			return null;
 //      Plan p = makeIndexJoin(current, currsch);
-		Plan p = makeMergeJoin(current, currsch, joinpred);
-//      Plan p =makeNestedLoopJoin(current,currsch);
+//		Plan p = makeMergeJoin(current, currsch, joinpred);
+		Plan p = makeNestedLoopJoin(current, currsch);
 		if (p == null)
 			p = makeProductJoin(current, currsch);
 		return p;
@@ -130,10 +130,15 @@ class TablePlanner {
 	}
 
 	private Plan makeNestedLoopJoin(Plan current, Schema currsch) {
-
-		Plan p = new ProductPlan(myplan, current);
-		p = addSelectPred(p);
-		return addJoinPred(p, currsch);
+		for (String fldname : myschema.fields()) {
+			String outerfield = mypred.equatesWithField(fldname);
+			if (outerfield != null && currsch.hasField(outerfield)) {
+				Plan p = new NestedLoopJoinPlan(current, myplan, outerfield, fldname);
+				p = addSelectPred(p);
+				return addJoinPred(p, currsch);
+			}
+		}
+		return null;
 	}
 
 	private Plan makeProductJoin(Plan current, Schema currsch) {
