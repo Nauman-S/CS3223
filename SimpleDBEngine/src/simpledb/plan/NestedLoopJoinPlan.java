@@ -6,7 +6,7 @@ import simpledb.record.Schema;
 
 public class NestedLoopJoinPlan implements Plan {
 	private Plan p1, p2;
-	private String joinfield, fieldRhs;
+	private String fieldLhs, fieldRhs;
 	private Schema sch = new Schema();
 
 	/**
@@ -14,13 +14,13 @@ public class NestedLoopJoinPlan implements Plan {
 	 * 
 	 * @param p1        the left-hand plan
 	 * @param p2        the right-hand plan
-	 * @param joinfield the left-hand field used for joining
+	 * @param fieldLhs the left-hand field used for joining
 	 * @param fieldRhs  the right-hand field name used for joining
 	 */
-	public NestedLoopJoinPlan(Plan p1, Plan p2, String joinfield, String fieldRhs) {
+	public NestedLoopJoinPlan(Plan p1, Plan p2, String fieldLhs, String fieldRhs) {
 		this.p1 = p1;
 		this.p2 = p2;
-		this.joinfield = joinfield;
+		this.fieldLhs = fieldLhs;
 		this.fieldRhs = fieldRhs;
 		sch.addAll(p1.schema());
 		sch.addAll(p2.schema());
@@ -31,7 +31,7 @@ public class NestedLoopJoinPlan implements Plan {
 		Scan s1 = p1.open();
 		Scan s2 = p2.open();
 
-		return new NestedLoopJoinScan(s1, s2, joinfield, fieldRhs);
+		return new NestedLoopJoinScan(s1, s2, fieldLhs, fieldRhs);
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public class NestedLoopJoinPlan implements Plan {
 
 	@Override
 	public int recordsOutput() {
-		 int maxvals = Math.max(p1.distinctValues(joinfield),
+		 int maxvals = Math.max(p1.distinctValues(fieldLhs),
 	                p2.distinctValues(fieldRhs));
 	        return (p1.recordsOutput() * p2.recordsOutput()) / maxvals;
 	}

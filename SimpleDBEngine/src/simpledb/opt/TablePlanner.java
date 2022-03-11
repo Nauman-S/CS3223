@@ -6,6 +6,7 @@ import simpledb.record.*;
 import simpledb.query.*;
 import simpledb.metadata.*;
 import simpledb.index.planner.*;
+import simpledb.materialize.HashJoinPlan;
 import simpledb.materialize.MergeJoinPlan;
 import simpledb.multibuffer.MultibufferProductPlan;
 import simpledb.plan.*;
@@ -68,10 +69,30 @@ class TablePlanner {
 			return null;
 //      Plan p = makeIndexJoin(current, currsch);
 //		Plan p = makeMergeJoin(current, currsch, joinpred);
-		Plan p = makeNestedLoopJoin(current, currsch);
+//		Plan p = makeNestedLoopJoin(current, currsch);
+		Plan p = makeHashJoinPlan(current, currsch, joinpred);
 		if (p == null)
 			p = makeProductJoin(current, currsch);
 		return p;
+	}
+
+	public Plan makeHashJoinPlan(Plan current, Schema currsch, Predicate pred) {
+		if (pred.getTerms().isEmpty()) {
+			return null;
+		}
+		Term term = pred.getTerms().get(0);
+		String fieldName1 = term.getLhs().asFieldName();
+		String fieldName2 = term.getRhs().asFieldName();
+
+		if (!myplan.schema().hasField(fieldName1)) {
+			String temp = fieldName1;
+			fieldName1 = fieldName2;
+			fieldName2 = temp;
+		}
+
+		Plan p = new HashJoinPlan(tx, myplan, current, fieldName1, fieldName2);
+		p = addSelectPred(p);
+		return addJoinPred(p, currsch);
 	}
 
 	/**
