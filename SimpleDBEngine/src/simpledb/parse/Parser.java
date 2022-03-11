@@ -5,13 +5,16 @@ import java.util.Collection;
 import java.util.List;
 
 import simpledb.index.IndexType;
+import simpledb.materialize.AggregationFn;
 import simpledb.query.Constant;
 import simpledb.query.Expression;
+import simpledb.query.Field;
 import simpledb.query.Operator;
 import simpledb.query.OrderPair;
 import simpledb.query.Predicate;
 import simpledb.query.Term;
 import simpledb.record.Schema;
+import simpledb.query.AggregateField;
 
 /**
  * The SimpleDB parser.
@@ -29,6 +32,10 @@ public class Parser {
 
 	public String field() {
 		return lex.eatId();
+	}
+
+	public Field selectField() {
+		return lex.eatField();
 	}
 
 	public Constant constant() {
@@ -65,25 +72,39 @@ public class Parser {
 
 	public QueryData query() {
 		lex.eatKeyword("select");
-		List<String> fields = selectList();
+		List<Field> fields = selectList();
+		List<String> fldnames = new ArrayList<>();
+		List<AggregationFn> aggfns = new ArrayList<>();
+		for (Field field : fields) {
+			if (field.isAggregated()) {
+				aggfns.add(((AggregateField) field).getAggregationFunction());
+			}
+			fldnames.add(field.getFldname());
+		}
 		lex.eatKeyword("from");
 		Collection<String> tables = tableList();
-		Predicate pred = new Predicate();
-		if (lex.matchKeyword("where")) {
-			lex.eatKeyword("where");
-			pred = predicate();
+
+		Predicate pred = getPredicate();
+
+		List<String> groupByList = getGroupByList();
+
+		List<OrderPair> orderPairList = getOrderPairList();
+
+		QueryData qd = new QueryData(fldnames, aggfns, tables, pred, groupByList, orderPairList);
+		if (!isValidQuery(qd)) {
+			throw new BadSyntaxException();
 		}
-		List<OrderPair> orderPairList = new ArrayList<>();
-		if (lex.matchKeyword("order")) {
-			lex.eatKeyword("order");
-			if (lex.matchKeyword("by")) {
-				lex.eatKeyword("by");
-				orderPairList = orderList();
-			} else {
-				throw new BadSyntaxException();
-			}
+		return qd;
+	}
+
+	private boolean isValidQuery(QueryData qd) {
+		if (lex.hasNextToken()) {
+			return false;
 		}
-		return new QueryData(fields, tables, pred, orderPairList);
+		if (qd.groupByList().isEmpty() && qd.fields().size() != qd.aggfns().size()) {
+			return false;
+		}
+		return true;
 	}
 
 	private List<OrderPair> orderList() {
@@ -106,12 +127,59 @@ public class Parser {
 		return L;
 	}
 
-	private List<String> selectList() {
+	private Predicate getPredicate() {
+		Predicate pred = new Predicate();
+		if (lex.matchKeyword("where")) {
+			lex.eatKeyword("where");
+			pred = predicate();
+		}
+		return pred;
+	}
+
+	private List<String> getGroupByList() {
+		List<String> groupByList = new ArrayList<>();
+		if (lex.matchKeyword("group")) {
+			lex.eatKeyword("group");
+			if (lex.matchKeyword("by")) {
+				lex.eatKeyword("by");
+				groupByList = selectGroup();
+			} else {
+				throw new BadSyntaxException();
+			}
+		}
+		return groupByList;
+	}
+
+	private List<OrderPair> getOrderPairList() {
+		List<OrderPair> orderPairList = new ArrayList<>();
+		if (lex.matchKeyword("order")) {
+			lex.eatKeyword("order");
+			if (lex.matchKeyword("by")) {
+				lex.eatKeyword("by");
+				orderPairList = orderList();
+			} else {
+				throw new BadSyntaxException();
+			}
+		}
+		return orderPairList;
+	}
+
+	private List<Field> selectList() {
+		List<Field> L = new ArrayList<>();
+		L.add(selectField());
+		if (lex.matchDelim(',')) {
+			lex.eatDelim(',');
+			L.addAll(selectList());
+		}
+		return L;
+	}
+
+	private List<String> selectGroup() {
 		List<String> L = new ArrayList<String>();
 		L.add(field());
 		if (lex.matchDelim(',')) {
 			lex.eatDelim(',');
-			L.addAll(selectList());
+			L.addAll(selectGroup());
 		}
 		return L;
 	}
