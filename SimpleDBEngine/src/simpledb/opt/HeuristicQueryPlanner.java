@@ -54,13 +54,23 @@ public class HeuristicQueryPlanner implements QueryPlanner {
 			currentplan = new GroupByPlan(tx, currentplan, data.groupByList(), data.aggfns());
 			List<String> fieldlist = data.fields();
 			data.aggfns().forEach(aggfn -> fieldlist.add(aggfn.fieldName()));
-			currentplan = new ProjectPlan(currentplan, fieldlist);
+
+			currentplan = getDistinctPlan(tx, data, currentplan, fieldlist);
 		} else {
-			currentplan = new ProjectPlan(currentplan, data.fields());
+
+			currentplan = getDistinctPlan(tx, data, currentplan, data.fields());
 			currentplan = new SortPlan(tx, currentplan, data.orderPairs());
 		}
 
 		return currentplan;
+	}
+
+	private Plan getDistinctPlan(Transaction tx, QueryData data, Plan p, List<String> fieldlist) {
+		if (data.isDistinct())
+			return new DistinctPlan(tx, p, fieldlist);
+
+		return new ProjectPlan(p, fieldlist);
+
 	}
 
 	private Plan getLowestSelectPlan() {
