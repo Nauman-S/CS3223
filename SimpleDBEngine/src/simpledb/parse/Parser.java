@@ -2,10 +2,13 @@ package simpledb.parse;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import simpledb.index.IndexType;
 import simpledb.materialize.AggregationFn;
+import simpledb.query.AggregateField;
 import simpledb.query.Constant;
 import simpledb.query.Expression;
 import simpledb.query.Field;
@@ -14,7 +17,6 @@ import simpledb.query.OrderPair;
 import simpledb.query.Predicate;
 import simpledb.query.Term;
 import simpledb.record.Schema;
-import simpledb.query.AggregateField;
 
 /**
  * The SimpleDB parser.
@@ -74,12 +76,14 @@ public class Parser {
 		lex.eatKeyword("select");
 		List<Field> fields = selectList();
 		List<String> fldnames = new ArrayList<>();
+
 		List<AggregationFn> aggfns = new ArrayList<>();
 		for (Field field : fields) {
 			if (field.isAggregated()) {
 				aggfns.add(((AggregateField) field).getAggregationFunction());
+			} else {
+				fldnames.add(field.getFldname());
 			}
-			fldnames.add(field.getFldname());
 		}
 		lex.eatKeyword("from");
 		Collection<String> tables = tableList();
@@ -101,7 +105,7 @@ public class Parser {
 		if (lex.hasNextToken()) {
 			return false;
 		}
-		if (qd.groupByList().isEmpty() && qd.fields().size() != qd.aggfns().size()) {
+		if (!qd.aggfns().isEmpty() && qd.groupByList().isEmpty() && !qd.fields().isEmpty()) {
 			return false;
 		}
 		return true;

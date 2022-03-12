@@ -7,13 +7,12 @@ import simpledb.query.*;
  * 
  * @author Edward Sciore
  */
-public class AvgFn implements AggregationFn {
-	private String fldname;
+public class AvgFn extends AggregationFn {
 	private int sum;
 	private int count;
 
 	public AvgFn(String fldname) {
-		this.fldname = fldname;
+		super(fldname, AggregateType.AVG);
 	}
 
 	public void processFirst(Scan s) {

@@ -7,12 +7,11 @@ import simpledb.query.*;
  * 
  * @author Edward Sciore
  */
-public class MinFn implements AggregationFn {
-	private String fldname;
+public class MinFn extends AggregationFn {
 	private Constant val;
 
 	public MinFn(String fldname) {
-		this.fldname = fldname;
+		super(fldname, AggregateType.MIN);
 	}
 
 	public void processFirst(Scan s) {

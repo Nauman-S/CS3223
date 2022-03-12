@@ -1,8 +1,10 @@
 package simpledb.materialize;
 
+import java.sql.Types;
 import java.util.*;
 import simpledb.tx.Transaction;
 import simpledb.record.Schema;
+import simpledb.parse.BadSyntaxException;
 import simpledb.plan.Plan;
 import simpledb.query.*;
 
@@ -37,8 +39,21 @@ public class GroupByPlan implements Plan {
 		this.aggfns = aggfns;
 		for (String fldname : groupfields)
 			sch.add(fldname, p.schema());
-		for (AggregationFn fn : aggfns)
-			sch.addIntField(fn.fieldName());
+		for (AggregationFn fn : aggfns) {
+			int type = p.schema().type(fn.getfldName());
+			if (type != Types.INTEGER
+					&& (fn.getAggType() == AggregateType.AVG || fn.getAggType() == AggregateType.SUM)) {
+				throw new BadSyntaxException();
+			}
+			if (type == Types.INTEGER || fn.getAggType() == AggregateType.AVG || fn.getAggType() == AggregateType.COUNT
+					|| fn.getAggType() == AggregateType.SUM) {
+				sch.addIntField(fn.fieldName());
+			} else {
+				int length = p.schema().length(fn.getfldName());
+				sch.addStringField(fn.fieldName(), length);
+			}
+
+		}
 	}
 
 	/**

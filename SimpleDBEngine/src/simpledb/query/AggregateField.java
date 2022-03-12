@@ -9,18 +9,14 @@ import simpledb.materialize.SumFn;
 
 public class AggregateField extends Field {
 
-	public enum Type {
-		MAX, MIN, SUM, COUNT, AVG
-	}
-
 	private AggregationFn aggregateFn;
 
-	public AggregateField(String fldname, Type type) {
+	public AggregateField(String fldname, AggregateType type) {
 		super(fldname);
 		this.aggregateFn = getAggregateFunction(type);
 	}
 
-	private AggregationFn getAggregateFunction(Type type) {
+	private AggregationFn getAggregateFunction(AggregateType type) {
 		switch (type) {
 		case MAX:
 			return new MaxFn(fldname);

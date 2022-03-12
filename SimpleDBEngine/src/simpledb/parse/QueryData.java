@@ -71,6 +71,10 @@ public class QueryData {
 		return groupByList;
 	}
 
+	public boolean isAggregate() {
+		return !this.groupByList().isEmpty() || !this.aggfns().isEmpty();
+	}
+
 	public String toString() {
 		String result = "select ";
 		for (String fldname : fields)

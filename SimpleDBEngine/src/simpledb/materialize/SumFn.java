@@ -7,12 +7,11 @@ import simpledb.query.*;
  * 
  * @author Edward Sciore
  */
-public class SumFn implements AggregationFn {
-	private String fldname;
+public class SumFn extends AggregationFn {
 	private int sum;
 
 	public SumFn(String fldname) {
-		this.fldname = fldname;
+		super(fldname, AggregateType.SUM);
 	}
 
 	public void processFirst(Scan s) {

@@ -4,6 +4,7 @@ import java.util.*;
 
 import simpledb.index.IndexType;
 import simpledb.query.AggregateField;
+import simpledb.query.AggregateType;
 import simpledb.query.Field;
 import simpledb.query.Operator;
 
@@ -151,7 +152,7 @@ public class Lexer {
 	}
 
 	public AggregateField eatAggregate() {
-		AggregateField.Type type = AggregateField.Type.valueOf(tok.sval.toUpperCase());
+		AggregateType type = AggregateType.valueOf(tok.sval.toUpperCase());
 		nextToken();
 		eatDelim('(');
 		String fldname = eatId();
@@ -238,7 +239,7 @@ public class Lexer {
 	}
 
 	public boolean hasNextToken() {
-		return tok.ttype != StreamTokenizer.TT_EOF;
+		return tok.ttype != StreamTokenizer.TT_EOF || tok.sval!=null;
 	}
 
 	private void nextToken() {
