@@ -239,7 +239,7 @@ public class Lexer {
 	}
 
 	public boolean hasNextToken() {
-		return tok.ttype != StreamTokenizer.TT_EOF || tok.sval!=null;
+		return tok.ttype != StreamTokenizer.TT_EOF || tok.sval != null;
 	}
 
 	private void nextToken() {
@@ -252,7 +252,8 @@ public class Lexer {
 
 	private void initKeywords() {
 		keywords = Arrays.asList("select", "from", "where", "and", "insert", "into", "values", "delete", "update",
-				"set", "create", "table", "int", "varchar", "view", "as", "index", "on", "order", "by", "group");
+				"set", "create", "table", "int", "varchar", "view", "as", "index", "on", "order", "by", "group",
+				"distinct");
 	}
 
 	private void initAggregate() {
