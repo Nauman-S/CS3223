@@ -41,7 +41,7 @@ public class HashJoinPlan implements Plan {
 
     @Override
     public int blocksAccessed() {
-        return (p1.blocksAccessed() + p2.blocksAccessed());
+        return p1.blocksAccessed() + p2.blocksAccessed();
     }
 
     @Override
