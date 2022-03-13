@@ -6,6 +6,7 @@ import simpledb.record.*;
 import simpledb.query.*;
 import simpledb.metadata.*;
 import simpledb.index.planner.*;
+import simpledb.materialize.HashJoinPlan;
 import simpledb.materialize.MergeJoinPlan;
 import simpledb.multibuffer.MultibufferProductPlan;
 import simpledb.plan.*;
@@ -66,9 +67,10 @@ class TablePlanner {
 		Predicate joinpred = mypred.joinSubPred(myschema, currsch);
 		if (joinpred == null)
 			return null;
-//      Plan p = makeIndexJoin(current, currsch);
-//		Plan p = makeMergeJoin(current, currsch, joinpred);
-		Plan p = makeNestedLoopJoin(current, currsch);
+		// Plan p = makeIndexJoin(current, currsch);
+		// Plan p = makeMergeJoin(current, currsch, joinpred);
+		// Plan p = makeNestedLoopJoin(current, currsch);
+		Plan p = makeHashJoin(current, currsch);
 		if (p == null)
 			p = makeProductJoin(current, currsch);
 		return p;
@@ -95,6 +97,24 @@ class TablePlanner {
 			}
 		}
 		return null;
+	}
+
+	private Plan makeHashJoin(Plan current, Schema currsch) {
+		Predicate joinpred = mypred.joinSubPred(currsch, myschema);
+		if (joinpred == null)
+			return null;
+
+		Term term = joinpred.getTerms().get(0);
+
+		String fieldName1 = term.getLhs().asFieldName();
+		String fieldName2 = term.getRhs().asFieldName();
+
+		if (!myplan.schema().hasField(fieldName1)) {
+			String temp = fieldName1;
+			fieldName1 = fieldName2;
+			fieldName2 = temp;
+		}
+		return new HashJoinPlan(tx, myplan, current, fieldName1, fieldName2);
 	}
 
 	private Plan makeIndexJoin(Plan current, Schema currsch) {
