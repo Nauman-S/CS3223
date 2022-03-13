@@ -2,9 +2,7 @@ package simpledb.parse;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import simpledb.index.IndexType;
 import simpledb.materialize.AggregationFn;
@@ -74,6 +72,13 @@ public class Parser {
 
 	public QueryData query() {
 		lex.eatKeyword("select");
+
+		boolean isDistinct = false;
+		if (lex.matchKeyword("distinct")) {
+			lex.eatKeyword("distinct");
+			isDistinct = true;
+		}
+
 		List<Field> fields = selectList();
 		List<String> fldnames = new ArrayList<>();
 
@@ -94,7 +99,7 @@ public class Parser {
 
 		List<OrderPair> orderPairList = getOrderPairList();
 
-		QueryData qd = new QueryData(fldnames, aggfns, tables, pred, groupByList, orderPairList);
+		QueryData qd = new QueryData(isDistinct, fldnames, aggfns, tables, pred, groupByList, orderPairList);
 		if (!isValidQuery(qd)) {
 			throw new BadSyntaxException();
 		}

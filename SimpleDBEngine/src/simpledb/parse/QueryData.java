@@ -11,6 +11,7 @@ import simpledb.query.*;
  * @author Edward Sciore
  */
 public class QueryData {
+	private boolean isDistinct;
 	private List<String> fields;
 	private List<AggregationFn> aggfns;
 	private Collection<String> tables;
@@ -21,8 +22,9 @@ public class QueryData {
 	/**
 	 * Saves the field and table list and predicate.
 	 */
-	public QueryData(List<String> fields, List<AggregationFn> aggfns, Collection<String> tables, Predicate pred,
-			List<String> groupByList, List<OrderPair> orderPairList) {
+	public QueryData(boolean isDistinct, List<String> fields, List<AggregationFn> aggfns, Collection<String> tables,
+			Predicate pred, List<String> groupByList, List<OrderPair> orderPairList) {
+		this.isDistinct = isDistinct;
 		this.fields = fields;
 		this.aggfns = aggfns;
 		this.tables = tables;
@@ -73,6 +75,10 @@ public class QueryData {
 
 	public boolean isAggregate() {
 		return !this.groupByList().isEmpty() || !this.aggfns().isEmpty();
+	}
+
+	public boolean isDistinct() {
+		return this.isDistinct;
 	}
 
 	public String toString() {
