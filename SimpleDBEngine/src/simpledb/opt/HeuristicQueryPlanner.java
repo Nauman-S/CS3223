@@ -50,17 +50,23 @@ public class HeuristicQueryPlanner implements QueryPlanner {
 		// Step 4: Project on the field names
 
 		if (data.isAggregate()) {
-			currentplan = new SortPlan(tx, currentplan, data.orderPairs());
+			currentplan = getSortPlan(tx, currentplan, data);
 			currentplan = new GroupByPlan(tx, currentplan, data.groupByList(), data.aggfns());
 			List<String> fieldlist = data.fields();
 			data.aggfns().forEach(aggfn -> fieldlist.add(aggfn.fieldName()));
 			currentplan = new ProjectPlan(currentplan, fieldlist);
 		} else {
 			currentplan = new ProjectPlan(currentplan, data.fields());
-			currentplan = new SortPlan(tx, currentplan, data.orderPairs());
+			currentplan = getSortPlan(tx, currentplan, data);
 		}
 
 		return currentplan;
+	}
+
+	private Plan getSortPlan(Transaction tx, Plan currentplan, QueryData data) {
+		if (data.orderPairs().isEmpty())
+			return currentplan;
+		return new SortPlan(tx, currentplan, data.orderPairs());
 	}
 
 	private Plan getLowestSelectPlan() {

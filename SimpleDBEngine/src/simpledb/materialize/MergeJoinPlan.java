@@ -12,9 +12,9 @@ import java.util.*;
  * 
  * @author Edward Sciore
  */
-public class MergeJoinPlan implements Plan {
+public class MergeJoinPlan extends Plan {
 	private Plan p1, p2;
-	private String fldname1, fldname2;
+	private String joinfield1, joinfield2;
 	private Schema sch = new Schema();
 
 	/**
@@ -28,11 +28,11 @@ public class MergeJoinPlan implements Plan {
 	 * @param tx       the calling transaction
 	 */
 	public MergeJoinPlan(Transaction tx, Plan p1, Plan p2, String fldname1, String fldname2) {
-		this.fldname1 = fldname1;
+		this.joinfield1 = fldname1;
 		List<OrderPair> sortlist1 = Arrays.asList(new OrderPair(fldname1));
 		this.p1 = new SortPlan(tx, p1, sortlist1);
 
-		this.fldname2 = fldname2;
+		this.joinfield2 = fldname2;
 		List<OrderPair> sortlist2 = Arrays.asList(new OrderPair(fldname2));
 		this.p2 = new SortPlan(tx, p2, sortlist2);
 
@@ -49,7 +49,7 @@ public class MergeJoinPlan implements Plan {
 	public Scan open() {
 		Scan s1 = p1.open();
 		SortScan s2 = (SortScan) p2.open();
-		return new MergeJoinScan(s1, s2, fldname1, fldname2);
+		return new MergeJoinScan(s1, s2, joinfield1, joinfield2);
 	}
 
 	/**
@@ -76,7 +76,7 @@ public class MergeJoinPlan implements Plan {
 	 * @see simpledb.plan.Plan#recordsOutput()
 	 */
 	public int recordsOutput() {
-		int maxvals = Math.max(p1.distinctValues(fldname1), p2.distinctValues(fldname2));
+		int maxvals = Math.max(p1.distinctValues(joinfield1), p2.distinctValues(joinfield2));
 		return (p1.recordsOutput() * p2.recordsOutput()) / maxvals;
 	}
 
@@ -102,5 +102,15 @@ public class MergeJoinPlan implements Plan {
 	 */
 	public Schema schema() {
 		return sch;
+	}
+
+	@Override
+	public String format(int indent) {
+		String indentStr = "\t".repeat(indent);
+		StringBuilder sb = new StringBuilder();
+		sb.append(String.format("join using merge: %s = %s\n", joinfield1, joinfield2));
+		sb.append(String.format("%sleft: {%s}\n", indentStr, p1.format(indent + 1)));
+		sb.append(String.format("%sright: {%s}", indentStr, p2.format(indent + 1)));
+		return sb.toString();
 	}
 }

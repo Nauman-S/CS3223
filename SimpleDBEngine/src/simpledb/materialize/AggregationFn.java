@@ -57,4 +57,9 @@ public abstract class AggregationFn {
 		return this.aggtype;
 	}
 
+	@Override
+	public String toString() {
+		return String.format("%s(%s)", aggtype, fldname);
+	}
+
 }
