@@ -2,9 +2,7 @@ package simpledb.parse;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import simpledb.index.IndexType;
 import simpledb.materialize.AggregationFn;
@@ -12,7 +10,6 @@ import simpledb.query.AggregateField;
 import simpledb.query.Constant;
 import simpledb.query.Expression;
 import simpledb.query.Field;
-import simpledb.query.Operator;
 import simpledb.query.OrderPair;
 import simpledb.query.Predicate;
 import simpledb.query.Term;
@@ -56,7 +53,7 @@ public class Parser {
 
 	public Term term() {
 		Expression lhs = expression();
-		Operator operator = lex.eatOpr();
+		String operator = lex.eatOperator();
 		Expression rhs = expression();
 		return new Term(lhs, rhs, operator);
 	}
@@ -73,6 +70,10 @@ public class Parser {
 // Methods for parsing queries
 
 	public QueryData query() {
+		if (lex.matchKeyword("explain")) {
+			lex.eatKeyword("explain");
+		}
+
 		lex.eatKeyword("select");
 		List<Field> fields = selectList();
 		List<String> fldnames = new ArrayList<>();

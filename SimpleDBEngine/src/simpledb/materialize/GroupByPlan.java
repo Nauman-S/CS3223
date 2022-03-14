@@ -13,7 +13,7 @@ import simpledb.query.*;
  * 
  * @author Edward Sciore
  */
-public class GroupByPlan implements Plan {
+public class GroupByPlan extends Plan {
 	private Plan p;
 	private List<String> groupfields;
 	private List<AggregationFn> aggfns;
@@ -114,5 +114,16 @@ public class GroupByPlan implements Plan {
 	 */
 	public Schema schema() {
 		return sch;
+	}
+
+	@Override
+	public String format(int indent) {
+		String indentStr = "\t".repeat(indent);
+		StringBuilder sb = new StringBuilder();
+		sb.append("group by:\n");
+		sb.append(String.format("%sfields: %s\n", indentStr, Arrays.toString(groupfields.toArray())));
+		sb.append(String.format("%saggregatefunctions: %s\n", indentStr, Arrays.toString(aggfns.toArray())));
+		sb.append(String.format("%s{%s}", indentStr, p.format(indent + 1)));
+		return sb.toString();
 	}
 }

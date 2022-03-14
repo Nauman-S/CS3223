@@ -49,4 +49,9 @@ public class RecordComparator implements Comparator<Scan> {
 		}
 		return 0;
 	}
+
+	@Override
+	public String toString() {
+		return Arrays.toString(orderPairList.toArray());
+	}
 }
