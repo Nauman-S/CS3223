@@ -6,6 +6,7 @@ import java.util.List;
 import simpledb.materialize.MaterializePlan;
 import simpledb.materialize.RecordComparator;
 import simpledb.materialize.SingleRecordScan;
+import simpledb.materialize.SortScan;
 import simpledb.materialize.TempTable;
 import simpledb.query.OrderPair;
 import simpledb.query.Scan;
@@ -40,7 +41,8 @@ public class DistinctPlan implements Plan {
 		src.close();
 		while (runs.size() > 1)
 			runs = doAMergeIteration(runs);
-		return new DistinctScan(runs, comp);
+		assert runs.size() == 1;
+		return new SortScan(runs, comp);
 	}
 
 	@Override
