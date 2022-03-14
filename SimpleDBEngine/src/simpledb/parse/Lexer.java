@@ -6,8 +6,6 @@ import simpledb.index.IndexType;
 import simpledb.query.AggregateField;
 import simpledb.query.AggregateType;
 import simpledb.query.Field;
-import simpledb.query.Operator;
-
 import java.io.*;
 
 /**
@@ -17,6 +15,8 @@ import java.io.*;
  */
 public class Lexer {
 	private Collection<String> keywords;
+	private Collection<Character> operatorChars;
+	private Collection<String> operators;
 	private Collection<String> aggregate;
 	private StreamTokenizer tok;
 
@@ -27,6 +27,7 @@ public class Lexer {
 	 */
 	public Lexer(String s) {
 		initKeywords();
+		initOperators();
 		initAggregate();
 		tok = new StreamTokenizer(new StringReader(s));
 		tok.ordinaryChar('.'); // disallow "." in identifiers
@@ -86,6 +87,35 @@ public class Lexer {
 	 */
 	public boolean matchId() {
 		return tok.ttype == StreamTokenizer.TT_WORD && !keywords.contains(tok.sval);
+	}
+
+	/**
+	 * Returns true if the current token is an operator.
+	 * 
+	 * @return true if the current token is an operator
+	 */
+	public boolean matchOperatorChar() {
+		return operatorChars.contains((char) tok.ttype);
+	}
+
+	/**
+	 * Returns true if the string is an operator.
+	 * 
+	 * @return true if the string is an operator
+	 */
+	public boolean matchOperators(String s) {
+		return operators.contains(s);
+	}
+
+	/**
+	 * Returns true if the current token is a legal index type.
+	 * 
+	 * @return true if the current token is an index type.
+	 */
+	public boolean matchIdxType() {
+		Collection<String> operators = Arrays.asList(IndexType.HASH.toString().toLowerCase(),
+				IndexType.BTREE.toString().toLowerCase());
+		return tok.ttype == StreamTokenizer.TT_WORD && operators.contains(tok.sval);
 	}
 
 //Methods to "eat" the current token
@@ -161,53 +191,27 @@ public class Lexer {
 	}
 
 	/**
-	 * Identifies and returns the comparison operator used and moves on to the next
-	 * token. Otherwise throws an exception
+	 * Throws an exception if the current token is not an operator. Otherwise,
+	 * returns the identifier string and moves to the next token.
 	 * 
-	 * @return the operator that has been identified
+	 * @return the string value of the current token
 	 */
-	public Operator eatOpr() {
-		if (matchDelim('<')) {
-			eatDelim('<');
-			if (matchDelim('=')) {
-				eatDelim('=');
-				return new Operator(1);
-			} else if (matchDelim('>')) {
-				eatDelim('>');
-				return new Operator(2);
-			} else {
-				return new Operator(3);
-			}
-
-		} else if (matchDelim('>')) {
-			eatDelim('>');
-			if (matchDelim('=')) {
-				eatDelim('=');
-				return new Operator(4);
-			} else {
-				return new Operator(5);
-			}
-
-		} else if (matchDelim('!')) {
-			eatDelim('!');
-			eatDelim('=');
-			return new Operator(2);
-
-		} else {
-			eatDelim('=');
-			return new Operator(6);
+	public String eatOperator() {
+		String s1 = (char) tok.ttype + "";
+		if (!matchOperatorChar()) { // not an operator
+			throw new BadSyntaxException();
 		}
-	}
+		nextToken();
 
-	/**
-	 * Returns true if the current token is a legal index type.
-	 * 
-	 * @return true if the current token is an index type.
-	 */
-	public boolean matchIdxType() {
-		Collection<String> operators = Arrays.asList(IndexType.HASH.toString().toLowerCase(),
-				IndexType.BTREE.toString().toLowerCase());
-		return tok.ttype == StreamTokenizer.TT_WORD && operators.contains(tok.sval);
+		String s2 = (char) tok.ttype + "";
+		if (!matchOperatorChar()) { // check if next token is an operator
+			return s1;
+		}
+		if (!matchOperators(s1 + s2)) { // invalid operator
+			throw new BadSyntaxException();
+		}
+		nextToken();
+		return s1 + s2;
 	}
 
 	/**
@@ -253,10 +257,16 @@ public class Lexer {
 	private void initKeywords() {
 		keywords = Arrays.asList("select", "from", "where", "and", "insert", "into", "values", "delete", "update",
 				"set", "create", "table", "int", "varchar", "view", "as", "index", "on", "order", "by", "group",
-				"distinct");
+				"explain", "distinct");
+	}
+
+	private void initOperators() {
+		operatorChars = Arrays.asList('=', '!', '<', '>');
+		operators = Arrays.asList("=", "!=", "<>", "<", "<=", ">", ">=");
 	}
 
 	private void initAggregate() {
 		aggregate = Arrays.asList("max", "min", "avg", "sum", "count");
 	}
+
 }

@@ -1,6 +1,7 @@
 package simpledb.query;
 
 import simpledb.plan.Plan;
+import simpledb.query.operator.Operator;
 import simpledb.record.*;
 
 /**
@@ -11,42 +12,31 @@ import simpledb.record.*;
  */
 public class Term {
 	private Expression lhs, rhs;
-	private Operator op;
+	private Operator operator;
 
 	/**
-	 * Create a new term that compares two expressions with the given operator
+	 * Create a new term that compares two expressions for equality.
 	 * 
-	 * @param lhs      the LHS expression
-	 * @param rhs      the RHS expression
-	 * @param Operator the operator
+	 * @param lhs the LHS expression
+	 * @param rhs the RHS expression
 	 */
-	public Term(Expression lhs, Expression rhs, Operator op) {
+	public Term(Expression lhs, Expression rhs, String operator) {
 		this.lhs = lhs;
 		this.rhs = rhs;
-		this.op = op;
+		this.operator = Operator.of(operator);
 	}
 
 	/**
-	 * Evaluates both expressions, with respect to the specified scan and determines
-	 * if the condition is satisfied.
+	 * Return true if both of the term's expressions evaluate to the same constant,
+	 * with respect to the specified scan.
 	 * 
 	 * @param s the scan
-	 * @return true if lhs op rhs evaluates to true
+	 * @return true if both expressions have the same value in the scan
 	 */
 	public boolean isSatisfied(Scan s) {
 		Constant lhsval = lhs.evaluate(s);
 		Constant rhsval = rhs.evaluate(s);
-
-		int i = lhsval.compareTo(rhsval);
-		if (i == 0) {
-			return op.i == Operator.EQUAL_TO || op.i == Operator.LESS_THAN_AND_EQUAL_TO
-					|| op.i == Operator.GREATER_THAN_AND_EQUAL_TO;
-		} else if (i < 0) {
-			return op.i == Operator.LESS_THAN_AND_EQUAL_TO || op.i == Operator.LESS_THAN || op.i == Operator.NOT_EQUAL;
-		} else {
-			return op.i == Operator.GREATER_THAN_AND_EQUAL_TO || op.i == Operator.GREATER_THAN
-					|| op.i == Operator.NOT_EQUAL;
-		}
+		return operator.apply(lhsval, rhsval);
 	}
 
 	/**
@@ -88,7 +78,7 @@ public class Term {
 	 * @return either the constant or null
 	 */
 	public Constant equatesWithConstant(String fldname) {
-		if (op.i != Operator.EQUAL_TO) {
+		if (!operator.isEquals()) {
 			return null;
 		}
 		if (lhs.isFieldName() && lhs.asFieldName().equals(fldname) && !rhs.isFieldName())
@@ -108,7 +98,7 @@ public class Term {
 	 * @return either the name of the other field, or null
 	 */
 	public String equatesWithField(String fldname) {
-		if (op.i != Operator.EQUAL_TO) {
+		if (!operator.isEquals()) {
 			return null;
 		}
 		if (lhs.isFieldName() && lhs.asFieldName().equals(fldname) && rhs.isFieldName())
@@ -129,8 +119,9 @@ public class Term {
 		return lhs.appliesTo(sch) && rhs.appliesTo(sch);
 	}
 
+	@Override
 	public String toString() {
-		return lhs.toString() + "=" + rhs.toString();
+		return String.format("%s %s %s", lhs, operator, rhs);
 	}
 
 	public Expression getLhs() {

@@ -10,7 +10,6 @@ import simpledb.query.AggregateField;
 import simpledb.query.Constant;
 import simpledb.query.Expression;
 import simpledb.query.Field;
-import simpledb.query.Operator;
 import simpledb.query.OrderPair;
 import simpledb.query.Predicate;
 import simpledb.query.Term;
@@ -54,7 +53,7 @@ public class Parser {
 
 	public Term term() {
 		Expression lhs = expression();
-		Operator operator = lex.eatOpr();
+		String operator = lex.eatOperator();
 		Expression rhs = expression();
 		return new Term(lhs, rhs, operator);
 	}
@@ -71,6 +70,10 @@ public class Parser {
 // Methods for parsing queries
 
 	public QueryData query() {
+		if (lex.matchKeyword("explain")) {
+			lex.eatKeyword("explain");
+		}
+
 		lex.eatKeyword("select");
 
 		boolean isDistinct = false;

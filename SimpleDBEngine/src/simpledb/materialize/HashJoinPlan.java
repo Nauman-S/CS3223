@@ -10,7 +10,7 @@ import simpledb.tx.Transaction;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HashJoinPlan implements Plan {
+public class HashJoinPlan extends Plan {
     private Transaction tx;
     private Plan p1, p2;
     private String fldname1, fldname2;
@@ -110,4 +110,10 @@ public class HashJoinPlan implements Plan {
         for (String fldname : schema.fields())
             dest.setVal(fldname, src.getVal(fldname));
     }
+
+	@Override
+	public String format(int indent) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

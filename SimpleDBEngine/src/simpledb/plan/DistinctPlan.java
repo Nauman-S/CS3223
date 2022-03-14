@@ -7,6 +7,7 @@ import simpledb.materialize.MaterializePlan;
 import simpledb.materialize.RecordComparator;
 import simpledb.materialize.SingleRecordScan;
 import simpledb.materialize.SortScan;
+
 import simpledb.materialize.TempTable;
 import simpledb.query.OrderPair;
 import simpledb.query.Scan;
@@ -14,7 +15,8 @@ import simpledb.query.UpdateScan;
 import simpledb.record.Schema;
 import simpledb.tx.Transaction;
 
-public class DistinctPlan implements Plan {
+public class DistinctPlan extends Plan {
+
 	private Transaction tx;
 	private Plan p;
 	private Schema schema = new Schema();
@@ -140,6 +142,11 @@ public class DistinctPlan implements Plan {
 		for (String fldname : schema.fields())
 			dest.setVal(fldname, src.getVal(fldname));
 		return src.next();
+	}
+
+	@Override
+	public String format(int indent) {
+		return null;
 	}
 
 }

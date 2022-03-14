@@ -11,7 +11,7 @@ import simpledb.query.*;
  * 
  * @author Edward Sciore
  */
-public class SortPlan implements Plan {
+public class SortPlan extends Plan {
 	private Transaction tx;
 	private Plan p;
 	private Schema sch;
@@ -152,5 +152,14 @@ public class SortPlan implements Plan {
 		for (String fldname : sch.fields())
 			dest.setVal(fldname, src.getVal(fldname));
 		return src.next();
+	}
+
+	@Override
+	public String format(int indent) {
+		String indentStr = "\t".repeat(indent);
+		StringBuilder sb = new StringBuilder();
+		sb.append(String.format("sort: %s\n", comp));
+		sb.append(String.format("%s{%s}", indentStr, p.format(indent + 1)));
+		return sb.toString();
 	}
 }
