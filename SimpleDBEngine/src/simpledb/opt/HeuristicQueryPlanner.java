@@ -56,13 +56,8 @@ public class HeuristicQueryPlanner implements QueryPlanner {
 			data.aggfns().forEach(aggfn -> fieldlist.add(aggfn.fieldName()));
 			currentplan = new ProjectPlan(currentplan, fieldlist);
 		} else {
-			if (data.isDistinct()) {
-				currentplan = new DistinctPlan(tx, currentplan, data.fields());
-				currentplan = new SortPlan(tx, currentplan, data.orderPairs());
-			} else {
-				currentplan = new ProjectPlan(currentplan, data.fields());
-				currentplan = new SortPlan(tx, currentplan, data.orderPairs());
-			}
+			currentplan = data.isDistinct()?new DistinctPlan(tx, currentplan, data.fields()): new ProjectPlan(currentplan, data.fields());
+			currentplan = new SortPlan(tx, currentplan, data.orderPairs());
 		}
 
 		return currentplan;
