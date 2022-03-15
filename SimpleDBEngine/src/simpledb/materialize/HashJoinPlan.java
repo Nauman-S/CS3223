@@ -113,7 +113,11 @@ public class HashJoinPlan extends Plan {
 
 	@Override
 	public String format(int indent) {
-		// TODO Auto-generated method stub
-		return null;
+        String indentStr = "\t".repeat(indent);
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("join using grace hash: %s = %s\n", fldname1, fldname2));
+        sb.append(String.format("%sleft: {%s}\n", indentStr, p1.format(indent + 1)));
+        sb.append(String.format("%sright: {%s}", indentStr, p2.format(indent + 1)));
+        return sb.toString();
 	}
 }

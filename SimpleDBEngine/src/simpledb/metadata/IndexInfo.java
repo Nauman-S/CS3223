@@ -114,8 +114,8 @@ public class IndexInfo {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(String.format("index: %s", idxname));
-		sb.append(String.format("\stype: %s", idxType));
-		sb.append(String.format("\sfldname: %s", fldname));
+		sb.append(String.format("type: %s", idxType));
+		sb.append(String.format("fldname: %s", fldname));
 		return sb.toString();
 	}
 }

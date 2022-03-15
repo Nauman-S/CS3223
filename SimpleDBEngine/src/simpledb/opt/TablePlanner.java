@@ -67,12 +67,54 @@ class TablePlanner {
 		Predicate joinpred = mypred.joinSubPred(myschema, currsch);
 		if (joinpred == null)
 			return null;
-		// Plan p = makeIndexJoin(current, currsch);
-		// Plan p = makeMergeJoin(current, currsch, joinpred);
-		 Plan p = makeNestedLoopJoin(current, currsch);
+//		 Plan p = makeIndexJoin(current, currsch);
+//		 Plan p = makeMergeJoin(current, currsch, joinpred);
+//		 Plan p = makeNestedLoopJoin(current, currsch);
 //		Plan p = makeHashJoin(current, currsch);
+
+		Plan p = chooseBestJoinPlan(current, currsch, joinpred);
+
 		if (p == null)
 			p = makeProductJoin(current, currsch);
+		return p;
+	}
+
+	private Plan chooseBestJoinPlan(Plan current, Schema currsch, Predicate joinpred) {
+		Plan p = makeNestedLoopJoin(current, currsch);
+
+		if (p == null) {
+			// If nested loop join cant be made, nothing can.
+			return null;
+		}
+
+		Plan indexJoinPlan = makeIndexJoin(current, currsch);
+		int bestCost = p.blocksAccessed();
+
+		if (indexJoinPlan != null) {
+			int indexCost = indexJoinPlan.blocksAccessed();
+
+			if (bestCost > indexCost) {
+				p = indexJoinPlan;
+				bestCost = indexCost;
+			}
+		}
+		if (!joinpred.getTerms().isEmpty() && joinpred.getTerms().get(0).getOperator().isEquals()) {
+			// Equality join predicate
+			Plan mergeJoinPlan = makeMergeJoin(current, currsch, joinpred);
+			int mergeCost = mergeJoinPlan.blocksAccessed();
+
+			Plan hashJoinPlan = makeHashJoin(current, currsch);
+			int hashCost = hashJoinPlan.blocksAccessed();
+
+			if (bestCost > mergeCost) {
+				p = mergeJoinPlan;
+				bestCost = mergeCost;
+			}
+
+			if (bestCost > hashCost) {
+				p = hashJoinPlan;
+			}
+		}
 		return p;
 	}
 

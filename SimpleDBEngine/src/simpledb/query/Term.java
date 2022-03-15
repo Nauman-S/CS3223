@@ -132,4 +132,8 @@ public class Term {
 		return rhs;
 	}
 
+	public Operator getOperator() {
+		return operator;
+	}
+
 }
