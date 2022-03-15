@@ -146,7 +146,11 @@ public class DistinctPlan extends Plan {
 
 	@Override
 	public String format(int indent) {
-		return null;
+		String indentStr = "\t".repeat(indent);
+		StringBuilder sb = new StringBuilder();
+		sb.append(String.format("Optimized Sort-based duplicate removal: %s\n", schema.fields()));
+		sb.append(String.format("%s{%s}", indentStr, p.format(indent + 1)));
+		return sb.toString();
 	}
 
 }
