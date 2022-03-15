@@ -1,2 +1,6 @@
 SimpleDBEngine/.idea/
 SimpleDBEngine/SimpleDBEngine.iml
+SimpleDBClients/.idea/
+SimpleDBClients/out/
+SimpleDBClients/studentdb/
+SimpleDBClients/SimpleDBClients.iml
