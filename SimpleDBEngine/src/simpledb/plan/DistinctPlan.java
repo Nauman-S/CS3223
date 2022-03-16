@@ -41,6 +41,8 @@ public class DistinctPlan extends Plan {
 		Scan src = p.open();
 		List<TempTable> runs = splitIntoRuns(src);
 		src.close();
+		if (runs.size() == 1)
+			runs = removeDuplicateFromSingleRun(runs);
 		while (runs.size() > 1)
 			runs = doAMergeIteration(runs);
 		assert runs.size() == 1;
@@ -66,6 +68,30 @@ public class DistinctPlan extends Plan {
 	@Override
 	public Schema schema() {
 		return schema;
+	}
+
+	private List<TempTable> removeDuplicateFromSingleRun(List<TempTable> runs) {
+		List<TempTable> outputRun = new ArrayList<>();
+
+		TempTable p1 = runs.remove(0);
+		TempTable result = new TempTable(tx, schema);
+		UpdateScan dest = result.open();
+
+		Scan src1 = p1.open();
+
+		boolean hasmore1 = src1.next();
+
+		if (hasmore1)
+			while (hasmore1)
+				hasmore1 = tryCopy(src1, dest);
+
+		src1.close();
+		dest.close();
+
+		outputRun.add(result);
+
+		return outputRun;
+
 	}
 
 	private List<TempTable> doAMergeIteration(List<TempTable> runs) {
