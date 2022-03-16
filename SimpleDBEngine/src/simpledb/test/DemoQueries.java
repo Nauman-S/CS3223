@@ -23,6 +23,16 @@ public class DemoQueries {
                 "select count(sid), gradyear from student where gradyear <= 2018 group by gradyear",
                 "select studentid from enroll where studentid = 20",
                 "select distinct majorid from student where majorid = 90",
+                "select sname from student where majorid=20",
+                "select sname from student where majorid<20",
+                "select sname from student order by sname",
+                "select sname, gradyear from student order by gradyear asc, sname desc",
+                "select distinct gradyear from student",
+                "select count(gradyear) from student",
+                "select majorid, avg(gradyear) from student group by majorid",
+                "select sum(sid) from student",
+                "select min(did) from dept",
+                "select max(did) from dept"
         };
         for (String s : arr) {
             executeCmd(stmt, "explain " + s);
@@ -33,11 +43,17 @@ public class DemoQueries {
     private static void executeTwoWayJoinQueries(Statement stmt) throws SQLException {
 //        Show a few two-way join queries (i.e., queries involving two tables)
 //        o   Do this for different join methods
+
         String[] arr = new String[]{
                 "select sname, dname, majorid from student, dept where majorid=did",
                 "select sname, dname, majorid from student, dept where majorid=did and majorid <=10",
                 "select sid, eid from student, enroll where sid = studentid",
                 "select sid, eid from student, enroll where sid = studentid and sid < 3",
+                "select sname, dname from student, dept where majorid = did and majorid <= 30 order by sname",
+                "select sname, grade from student, enroll where sid = studentid and grade = 'A'",
+                // buffer overflow
+//                "select dname, title from dept, course where did = deptid and did = 20 and cid = 112",
+                "select title, prof from course, section where cid = courseid group by title, prof order by prof",
         };
         for (String s : arr) {
             executeCmd(stmt, "explain " + s);
@@ -51,11 +67,13 @@ public class DemoQueries {
 
         // query 0 and 3 failing
         // query 0 passes without order by
-        // query 3 failing on null ptr, possible buffer overflow
+        // query 3 and 4 failing on null ptr, possible buffer overflow
         String[] arr = new String[]{
                 "select sid, eid, deptid, cid from student, enroll, dept, course where sid = studentid and majorid = did and majorid = deptid order by sid",
                 "select distinct sectid, cid, sid, deptid, gradyear, yearoffered from student, dept, course, section where courseid = cid and yearoffered <= gradyear and did = deptid and cid < 100",
                 "select sectid, deptid, count(cid), count(sid) from student, dept, course, section where courseid = cid and yearoffered = gradyear and did = deptid and sid < 20 group by sectid",
+                "select sname, dname, title, prof from student, dept, course, section where majorid = did and did = deptid and cid = courseid and did < 100 and cid = 22",
+                "select sname, gradyear, grade, title from student, enroll, section, course where sid = studentid and sectionid = sectid and courseid = cid and gradyear >= 2019",
         };
         for (String s : arr) {
             executeCmd(stmt, "explain " + s);
