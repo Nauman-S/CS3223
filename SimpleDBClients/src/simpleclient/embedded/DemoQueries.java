@@ -1,11 +1,7 @@
-package simpledb.test;
+package simpleclient.embedded;
+import java.sql.*;
 
 import simpledb.jdbc.embedded.EmbeddedDriver;
-
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 public class DemoQueries {
     private static void executeCmd(Statement stmt, String s) {
