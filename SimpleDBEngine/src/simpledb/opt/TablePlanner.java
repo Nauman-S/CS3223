@@ -73,7 +73,6 @@ class TablePlanner {
 //		Plan p = makeHashJoin(current, currsch);
 
 		Plan p = chooseBestJoinPlan(current, currsch, joinpred);
-
 		if (p == null)
 			p = makeProductJoin(current, currsch);
 		return p;
