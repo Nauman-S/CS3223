@@ -20,20 +20,22 @@ public class SimpleIJ {
          while (sc.hasNextLine()) {
             // process one line of input
             String cmd = sc.nextLine().trim();
-            if (cmd.startsWith("exit") || cmd.startsWith("EXIT"))
-               break;
-            else if (cmd.startsWith("select") || cmd.startsWith("SELECT"))
-               doQuery(stmt, cmd);
-            else if (cmd.startsWith("explain") || cmd.startsWith("EXPLAIN"))
-               doExplain(stmt, cmd);
-            else
-               doUpdate(stmt, cmd);
+            boolean isExit = execute(stmt, cmd);
+            if (isExit) break;
             System.out.print("\nSQL> ");
          }
       } catch (SQLException e) {
          e.printStackTrace();
       }
       sc.close();
+   }
+
+   public static boolean execute(Statement stmt, String cmd) {
+      if (cmd.startsWith("exit")) return true;
+      else if (cmd.startsWith("select")) doQuery(stmt, cmd);
+      else if (cmd.startsWith("explain")) doExplain(stmt, cmd);
+      else doUpdate(stmt, cmd);
+      return false;
    }
 
    private static void doQuery(Statement stmt, String cmd) {

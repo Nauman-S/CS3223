@@ -1,19 +1,18 @@
 package simpledb.plan;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import simpledb.materialize.MaterializePlan;
 import simpledb.materialize.RecordComparator;
 import simpledb.materialize.SingleRecordScan;
 import simpledb.materialize.SortScan;
-
 import simpledb.materialize.TempTable;
 import simpledb.query.OrderPair;
 import simpledb.query.Scan;
 import simpledb.query.UpdateScan;
 import simpledb.record.Schema;
 import simpledb.tx.Transaction;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DistinctPlan extends Plan {
 
@@ -174,7 +173,8 @@ public class DistinctPlan extends Plan {
 	public String format(int indent) {
 		String indentStr = "\t".repeat(indent);
 		StringBuilder sb = new StringBuilder();
-		sb.append(String.format("Optimized Sort-based duplicate removal: %s\n", schema.fields()));
+		sb.append(String.format("duplicate removal using optimized sorting: %s\n",
+				schema.fields()));
 		sb.append(String.format("%s{%s}", indentStr, p.format(indent + 1)));
 		return sb.toString();
 	}

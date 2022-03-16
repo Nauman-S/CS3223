@@ -1,11 +1,13 @@
 package simpledb.index.planner;
 
-import simpledb.record.*;
-import simpledb.query.*;
-import simpledb.metadata.IndexInfo;
-import simpledb.plan.Plan;
 import simpledb.index.Index;
 import simpledb.index.query.IndexSelectScan;
+import simpledb.metadata.IndexInfo;
+import simpledb.plan.Plan;
+import simpledb.query.Constant;
+import simpledb.query.Scan;
+import simpledb.record.Schema;
+import simpledb.record.TableScan;
 
 /**
  * The Plan class corresponding to the <i>indexselect</i> relational algebra
@@ -88,7 +90,7 @@ public class IndexSelectPlan extends Plan {
 	public String format(int indent) {
 		String indentStr = "\t".repeat(indent);
 		StringBuilder sb = new StringBuilder();
-		sb.append(String.format("select using index: [%s]\n", indentStr, ii));
+		sb.append(String.format("select using index: [%s]\n", ii));
 		sb.append(String.format("%sconstant: %s\n", indentStr, val));
 		sb.append(String.format("%s{%s}", indentStr, p.format(indent + 1)));
 		return sb.toString();
