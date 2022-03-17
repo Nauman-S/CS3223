@@ -69,34 +69,27 @@ public class HashJoinPlan extends Plan {
 		if (!src.next())
 			return temps;
 
-		List<UpdateScan> partitions = new ArrayList<>();
 		for (int i = 0; i < bufferSize - 1; ++i) {
 			temps.add(null);
-			partitions.add(null);
 		}
 
-		while (copyToPartition(src, partitions, temps, fldname, schema))
+		while (copyToPartition(src, temps, fldname, schema))
 			;
-
-		for (UpdateScan partition : partitions) {
-			if (partition != null)
-				partition.close();
-		}
 
 		return temps;
 	}
 
-	private boolean copyToPartition(Scan src, List<UpdateScan> partitions, List<TempTable> temps, String fldname,
-			Schema schema) {
+	private boolean copyToPartition(Scan src, List<TempTable> temps, String fldname, Schema schema) {
 		int index = partitionHash(src.getVal(fldname));
-		UpdateScan partition = partitions.get(index);
-		if (partition == null) {
-			TempTable temp = new TempTable(tx, schema);
-			temps.set(index, temp);
-			partitions.set(index, temp.open());
-			partition = partitions.get(index);
+		TempTable currenttemp = temps.get(index);
+		if (currenttemp == null) {
+			currenttemp = new TempTable(tx, schema);
+			temps.set(index, currenttemp);
 		}
-		copy(src, partition, schema);
+		UpdateScan currentscan = currenttemp.open();
+		copy(src, currentscan, schema);
+		currentscan.close();
+
 		return src.next();
 	}
 
