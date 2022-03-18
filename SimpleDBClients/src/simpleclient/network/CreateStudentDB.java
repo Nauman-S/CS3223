@@ -15,6 +15,9 @@ public class CreateStudentDB {
         String s = "create index majorIdIndex on student(MajorId) using hash";
         stmt.executeUpdate(s);
         System.out.println("majorIdIndex index created on student.");
+        String s2 = "create index sidIndex on student(SId) using hash";
+        stmt.executeUpdate(s2);
+        System.out.println("sidIndex index created on student.");
     }
 
     private static void insertStudentTable(Statement stmt) throws SQLException {
@@ -48,6 +51,12 @@ public class CreateStudentDB {
         String s = "create table DEPT(DId int, DName varchar(8))";
         stmt.executeUpdate(s);
         System.out.println("Table DEPT created.");
+    }
+
+    private static void createDeptIndex(Statement stmt) throws SQLException {
+        String s = "create index didIndex on dept(DId) using hash";
+        stmt.executeUpdate(s);
+        System.out.println("didIndex index created on dept.");
     }
 
     private static void insertDeptTable(Statement stmt) throws SQLException {
@@ -87,6 +96,12 @@ public class CreateStudentDB {
         String s = "create table COURSE(CId int, Title varchar(20), DeptId int)";
         stmt.executeUpdate(s);
         System.out.println("Table COURSE created.");
+    }
+
+    private static void createCourseIndex(Statement stmt) throws SQLException {
+        String s = "create index cidIndex on course(CId) using hash";
+        stmt.executeUpdate(s);
+        System.out.println("cidIndex index created on course.");
     }
 
     private static void insertCourseTable(Statement stmt) throws SQLException {
@@ -138,6 +153,12 @@ public class CreateStudentDB {
         String s = "create table SECTION(SectId int, CourseId int, Prof varchar(8), YearOffered int)";
         stmt.executeUpdate(s);
         System.out.println("Table SECTION created.");
+    }
+
+    private static void createSectionIndex(Statement stmt) throws SQLException {
+        String s = "create index sectidIndex on section(SectId) using hash";
+        stmt.executeUpdate(s);
+        System.out.println("sectidIndex index created on section.");
     }
 
     private static void insertSectionTable(Statement stmt) throws SQLException {
@@ -237,8 +258,11 @@ public class CreateStudentDB {
             createStudentTable(stmt);
             createStudentIndex(stmt);
             createDeptTable(stmt);
+            createDeptIndex(stmt);
             createCourseTable(stmt);
+            createCourseIndex(stmt);
             createSectionTable(stmt);
+            createSectionIndex(stmt);
             createEnrollTable(stmt);
             createEnrollIndex(stmt);
         } catch (SQLException e) {

@@ -1,6 +1,7 @@
 package simpleclient.network;
 import java.sql.*;
 
+import simpleclient.SimpleIJ;
 import simpledb.jdbc.network.NetworkDriver;
 
 public class DemoQueries {

@@ -1,6 +1,7 @@
 package simpleclient.embedded;
 import java.sql.*;
 
+import simpleclient.SimpleIJ;
 import simpledb.jdbc.embedded.EmbeddedDriver;
 
 public class DemoQueries {
@@ -67,7 +68,7 @@ public class DemoQueries {
         String url = "jdbc:simpledb:studentdb";
 
         try (Connection conn = d.connect(url, null); Statement stmt = conn.createStatement()) {
-            executeSingleTableQueries(stmt);
+//            executeSingleTableQueries(stmt);
             executeTwoWayJoinQueries(stmt);
             executeFourWayJoinQueries(stmt);
         } catch (SQLException e) {

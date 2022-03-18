@@ -73,8 +73,8 @@ class TablePlanner {
         Schema currsch = current.schema();
         Predicate joinpred = mypred.joinSubPred(myschema, currsch);
         if (joinpred == null) return null;
-//		 Plan p = makeIndexJoin(current, currsch);
-//		 Plan p = makeMergeJoin(current, currsch, joinpred);
+//		Plan p = makeIndexJoin(current, currsch);
+//		Plan p = makeMergeJoin(current, currsch, joinpred);
         Plan p = makeNestedLoopJoin(current, currsch);
 //		Plan p = makeHashJoin(current, currsch);
 
