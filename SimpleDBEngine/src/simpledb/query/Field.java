@@ -1,22 +1,38 @@
 package simpledb.query;
 
+/**
+ * Field.
+ */
 public class Field {
-	protected String fldname;
+    /**
+     * The field name.
+     */
+    protected String fldname;
 
-	public Field(String fldname) {
-		this.fldname = fldname;
-	}
+    /**
+     * Instantiates a new Field.
+     *
+     * @param fldname the fldname
+     */
+    public Field(String fldname) {
+        this.fldname = fldname;
+    }
 
-	public String getFldname() {
-		return fldname;
-	}
+    public String getFldname() {
+        return fldname;
+    }
 
-	@Override
-	public String toString() {
-		return fldname;
-	}
+    @Override
+    public String toString() {
+        return fldname;
+    }
 
-	public boolean isAggregated() {
-		return false;
-	}
+    /**
+     * Returns true if the field is aggregated.
+     *
+     * @return the boolean
+     */
+    public boolean isAggregated() {
+        return false;
+    }
 }

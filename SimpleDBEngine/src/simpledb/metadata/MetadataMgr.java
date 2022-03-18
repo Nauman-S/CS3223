@@ -1,9 +1,11 @@
 package simpledb.metadata;
 
-import java.util.Map;
-import simpledb.tx.Transaction;
 import simpledb.index.IndexType;
-import simpledb.record.*;
+import simpledb.record.Layout;
+import simpledb.record.Schema;
+import simpledb.tx.Transaction;
+
+import java.util.Map;
 
 public class MetadataMgr {
    private static TableMgr  tblmgr;

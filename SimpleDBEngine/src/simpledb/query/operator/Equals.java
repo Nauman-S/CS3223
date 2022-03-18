@@ -5,24 +5,24 @@ package simpledb.query.operator;
  */
 
 public class Equals extends Operator {
-	public static final String OPERATOR_STRING = "=";
+    public static final String OPERATOR_STRING = "=";
 
-	Equals() {
-		super();
-	}
+    Equals() {
+        super();
+    }
 
-	@Override
-	public <T extends Comparable<T>> boolean apply(T lhs, T rhs) {
-		return lhs.equals(rhs);
-	}
+    @Override
+    public <T extends Comparable<T>> boolean apply(T lhs, T rhs) {
+        return lhs.equals(rhs);
+    }
 
-	@Override
-	public boolean isEquals() {
-		return true;
-	}
+    @Override
+    public boolean isEquals() {
+        return true;
+    }
 
-	@Override
-	public String toString() {
-		return OPERATOR_STRING;
-	}
+    @Override
+    public String toString() {
+        return OPERATOR_STRING;
+    }
 }
