@@ -5,20 +5,20 @@ package simpledb.query.operator;
  */
 
 public class NotEquals extends Operator {
-	public static final String OPERATOR_STRING_1 = "!=";
-	public static final String OPERATOR_STRING_2 = "<>";
+    public static final String OPERATOR_STRING_1 = "!=";
+    public static final String OPERATOR_STRING_2 = "<>";
 
-	NotEquals() {
-		super();
-	}
+    NotEquals() {
+        super();
+    }
 
-	@Override
-	public <T extends Comparable<T>> boolean apply(T lhs, T rhs) {
-		return !lhs.equals(rhs);
-	}
+    @Override
+    public <T extends Comparable<T>> boolean apply(T lhs, T rhs) {
+        return !lhs.equals(rhs);
+    }
 
-	@Override
-	public String toString() {
-		return OPERATOR_STRING_1;
-	}
+    @Override
+    public String toString() {
+        return OPERATOR_STRING_1;
+    }
 }

@@ -7,39 +7,53 @@ import simpledb.materialize.MaxFn;
 import simpledb.materialize.MinFn;
 import simpledb.materialize.SumFn;
 
+/**
+ * The class Aggregate field.
+ */
 public class AggregateField extends Field {
 
-	private AggregationFn aggregateFn;
+    private AggregationFn aggregateFn;
 
-	public AggregateField(String fldname, AggregateType type) {
-		super(fldname);
-		this.aggregateFn = getAggregateFunction(type);
-	}
+    /**
+     * Instantiates a new Aggregate field.
+     *
+     * @param fldname the fldname
+     * @param type    the type
+     */
+    public AggregateField(String fldname, AggregateType type) {
+        super(fldname);
+        this.aggregateFn = getAggregateFunction(type);
+    }
 
-	private AggregationFn getAggregateFunction(AggregateType type) {
-		switch (type) {
-		case MAX:
-			return new MaxFn(fldname);
-		case MIN:
-			return new MinFn(fldname);
-		case SUM:
-			return new SumFn(fldname);
-		case COUNT:
-			return new CountFn(fldname);
-		case AVG:
-			return new AvgFn(fldname);
-		}
+    private AggregationFn getAggregateFunction(AggregateType type) {
+        switch (type) {
+            case MAX:
+                return new MaxFn(fldname);
+            case MIN:
+                return new MinFn(fldname);
+            case SUM:
+                return new SumFn(fldname);
+            case COUNT:
+                return new CountFn(fldname);
+            case AVG:
+                return new AvgFn(fldname);
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	public boolean isAggregated() {
-		return true;
-	}
+    @Override
+    public boolean isAggregated() {
+        return true;
+    }
 
-	public AggregationFn getAggregationFunction() {
-		return aggregateFn;
-	}
+    /**
+     * Gets aggregation function.
+     *
+     * @return the aggregation function
+     */
+    public AggregationFn getAggregationFunction() {
+        return aggregateFn;
+    }
 
 }

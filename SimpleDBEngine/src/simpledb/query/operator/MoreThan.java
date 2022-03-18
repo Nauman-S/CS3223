@@ -5,19 +5,19 @@ package simpledb.query.operator;
  */
 
 public class MoreThan extends Operator {
-	public static final String OPERATOR_STRING = ">";
+    public static final String OPERATOR_STRING = ">";
 
-	MoreThan() {
-		super();
-	}
+    MoreThan() {
+        super();
+    }
 
-	@Override
-	public <T extends Comparable<T>> boolean apply(T lhs, T rhs) {
-		return lhs.compareTo(rhs) > 0;
-	}
+    @Override
+    public <T extends Comparable<T>> boolean apply(T lhs, T rhs) {
+        return lhs.compareTo(rhs) > 0;
+    }
 
-	@Override
-	public String toString() {
-		return OPERATOR_STRING;
-	}
+    @Override
+    public String toString() {
+        return OPERATOR_STRING;
+    }
 }
