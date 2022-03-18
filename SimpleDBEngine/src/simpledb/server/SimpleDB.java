@@ -16,8 +16,8 @@ import simpledb.opt.HeuristicQueryPlanner;
  * @author Edward Sciore
  */
 public class SimpleDB {
-   public static int BLOCK_SIZE = 400;
-   public static int BUFFER_SIZE = 12;
+   public static int BLOCK_SIZE = 1024;
+   public static int BUFFER_SIZE = 64;
    public static String LOG_FILE = "simpledb.log";
 
    private  FileMgr     fm;
