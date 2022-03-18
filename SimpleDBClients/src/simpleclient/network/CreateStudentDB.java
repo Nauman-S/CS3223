@@ -4,6 +4,7 @@ import java.sql.*;
 import simpledb.jdbc.network.NetworkDriver;
 
 public class CreateStudentDB {
+
     private static void createStudentTable(Statement stmt) throws SQLException {
         String s = "create table STUDENT(SId int, SName varchar(10), MajorId int, GradYear int)";
         stmt.executeUpdate(s);
@@ -16,7 +17,7 @@ public class CreateStudentDB {
         System.out.println("majorIdIndex index created on student.");
     }
 
-    private static void insertStudentTable(Statement stmt, int start, int end) throws SQLException {
+    private static void insertStudentTable(Statement stmt) throws SQLException {
         String s = "insert into STUDENT(SId, SName, GradYear, MajorId) values ";
         String[] studvals = {"(1, 'joe', 2021, 10)", "(2, 'amy', 2020, 20)", "(3, 'max', 2022, 10)"
                 , "(4, 'sue', 2022, 20)", "(5, 'bob', 2020, 30)", "(6, 'kim', 2020, 20)", "(7, " +
@@ -36,12 +37,11 @@ public class CreateStudentDB {
                 "(43, 'eliot', 2018, 90)", "(44, 'carroll', 2016, 130)", "(45, 'kerstin', " +
                 "2020, 450)", "(46, 'rollins', 2017, 550)", "(47, 'kati', 2020, 60)", "(48, " +
                 "'esther', 2019, 410)", "(49, 'kristyn', 2022, 490)", "(50, 'andeee', 2021, 90)"};
-        end = Math.min(studvals.length, end);
-        for (int i = start; i < end; i++) {
-            stmt.executeUpdate(s + studvals[i]);
+        for (String studval : studvals) {
+            stmt.executeUpdate(s + studval);
         }
-        if (start < end)
-            System.out.println("STUDENT records from " + start + " to " + (end - 1) + " inserted.");
+        System.out.println("STUDENT records from " + 0 + " to " + (studvals.length - 1) + " " +
+                "inserted.");
     }
 
     private static void createDeptTable(Statement stmt) throws SQLException {
@@ -50,7 +50,7 @@ public class CreateStudentDB {
         System.out.println("Table DEPT created.");
     }
 
-    private static void insertDeptTable(Statement stmt, int start, int end) throws SQLException {
+    private static void insertDeptTable(Statement stmt) throws SQLException {
         String s = "insert into DEPT(DId, DName) values ";
         String[] deptvals = {"(10, 'compsci')", "(20, 'math')", "(30, 'drama')",
                 "(40, 'accounting')", "(50, 'africanastudies')", "(60, 'anesthesiology')",
@@ -75,12 +75,12 @@ public class CreateStudentDB {
                 "(610, 'sociology')", "(620, 'sociomedicalsciences')", "(630, 'statistics')",
                 "(640, 'surgery')", "(650, 'systemsbiology')", "(660, 'urology')", "(670, " +
                 "'visualarts')", "(680, 'writing')"};
-        end = Math.min(deptvals.length, end);
-        for (int i = start; i < end; i++) {
-            stmt.executeUpdate(s + deptvals[i]);
+        for (String deptval : deptvals) {
+            stmt.executeUpdate(s + deptval);
         }
-        if (start < end)
-            System.out.println("DEPT records from " + start + " to " + (end - 1) + " inserted.");
+        System.out.println("DEPT records from " + 0 + " to " + (deptvals.length - 1) + " " +
+                "inserted.");
+
     }
 
     private static void createCourseTable(Statement stmt) throws SQLException {
@@ -89,7 +89,7 @@ public class CreateStudentDB {
         System.out.println("Table COURSE created.");
     }
 
-    private static void insertCourseTable(Statement stmt, int start, int end) throws SQLException {
+    private static void insertCourseTable(Statement stmt) throws SQLException {
         String s = "insert into COURSE(CId, Title, DeptId) values ";
         String[] coursevals = {"(12, 'db systems', 10)", "(22, 'compilers', 10)",
                 "(32, 'calculus', 20)", "(42, 'algebra', 20)", "(52, 'acting', 30)", "(62, " +
@@ -127,12 +127,11 @@ public class CreateStudentDB {
                 "(652, 'video journalism', 40)", "(662, 'modern methods in genetics', 460)",
                 "(672, 'urban futures', 570)", "(682, 'economics of sports', 330)", "(692, " +
                 "'championing literacy placement', 540)", "(702, 'human rights', 470)"};
-        end = Math.min(coursevals.length, end);
-        for (int i = start; i < end; i++) {
-            stmt.executeUpdate(s + coursevals[i]);
+        for (String courseval : coursevals) {
+            stmt.executeUpdate(s + courseval);
         }
-        if (start < end)
-            System.out.println("COURSE records from " + start + " to " + (end - 1) + " inserted.");
+        System.out.println("COURSE records from " + 0 + " to " + (coursevals.length - 1) + " " +
+                "inserted.");
     }
 
     private static void createSectionTable(Statement stmt) throws SQLException {
@@ -141,7 +140,7 @@ public class CreateStudentDB {
         System.out.println("Table SECTION created.");
     }
 
-    private static void insertSectionTable(Statement stmt, int start, int end) throws SQLException {
+    private static void insertSectionTable(Statement stmt) throws SQLException {
         String s = "insert into SECTION(SectId, CourseId, Prof, YearOffered) values ";
         String[] sectvals = {"(13, 12, 'turing', 2018)", "(23, 12, 'turing', 2019)", "(33, 32, " +
                 "'newton', 2019)", "(43, 32, 'einstein', 2017)", "(53, 62, 'brando', 2018)", "(63, "
@@ -175,12 +174,11 @@ public class CreateStudentDB {
                 "(733, 92, 'menier', 2014)", "(743, 472, 'cheal', 2013)", "(753, 682, 'dugan'," +
                 " 2019)", "(763, 132, 'merwe', 2018)", "(773, 382, 'ducket', 2011)", "(783, " +
                 "82, 'heeks', 2020)", "(793, 582, 'sampey', 2019)", "(803, 92, 'cowtherd', 2021)"};
-        end = Math.min(sectvals.length, end);
-        for (int i = start; i < end; i++) {
-            stmt.executeUpdate(s + sectvals[i]);
+        for (String sectval : sectvals) {
+            stmt.executeUpdate(s + sectval);
         }
-        if (start < end)
-            System.out.println("SECTION records from " + start + " to " + (end - 1) + " inserted.");
+        System.out.println("SECTION records from " + 0 + " to " + (sectvals.length - 1) + " " +
+                "inserted.");
     }
 
     private static void createEnrollTable(Statement stmt) throws SQLException {
@@ -195,7 +193,7 @@ public class CreateStudentDB {
         System.out.println("studentIdIndex index created on enroll.");
     }
 
-    private static void insertEnrollTable(Statement stmt, int start, int end) throws SQLException {
+    private static void insertEnrollTable(Statement stmt) throws SQLException {
         String s = "insert into ENROLL(EId, StudentId, SectionId, Grade) values ";
         String[] enrollvals = {"(14, 1, 13, 'A')", "(24, 1, 43, 'C')", "(34, 2, 43, 'B+')",
                 "(44, 4, 33, 'B')", "(54, 4, 53, 'A')", "(64, 6, 53, 'A')", "(74, 39, 83, 'B')"
@@ -227,12 +225,11 @@ public class CreateStudentDB {
                 "49, 13, 'C+')", "(924, 3, 513, 'B')", "(934, 32, 603, 'D')", "(944, 1, 293, " +
                 "'C+')", "(954, 43, 43, 'A-')", "(964, 36, 473, 'D+')", "(974, 15, 653, 'A')",
                 "(984, 23, 223, 'C+')", "(994, 24, 133, 'D')", "(1004, 35, 53, 'B')"};
-        end = Math.min(enrollvals.length, end);
-        for (int i = start; i < end; i++) {
-            stmt.executeUpdate(s + enrollvals[i]);
+        for (String enrollval : enrollvals) {
+            stmt.executeUpdate(s + enrollval);
         }
-        if (start < end)
-            System.out.println("ENROLL records from " + start + " to " + (end - 1) + " inserted.");
+        System.out.println("ENROLL records from " + 0 + " to " + (enrollvals.length - 1) + " " +
+                "inserted.");
     }
 
     private static void createStudentDB(Driver d, String url) {
@@ -248,47 +245,14 @@ public class CreateStudentDB {
             e.printStackTrace();
         }
 
-        int step = 50;
-        for (int i = 0; i <= 100; i += step) {
-            try (Connection conn = d.connect(url, null); Statement stmt = conn.createStatement()) {
-                insertStudentTable(stmt, i, Math.min(i + step, 100));
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-        for (int i = 0; i <= 100; i += step) {
-            try (Connection conn = d.connect(url, null); Statement stmt = conn.createStatement()) {
-                insertEnrollTable(stmt, i, Math.min(i + step, 100));
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-        step = 1;
-        for (int i = 0; i <= 100; i += step) {
-            try (Connection conn = d.connect(url, null); Statement stmt = conn.createStatement()) {
-                insertDeptTable(stmt, i, Math.min(i + step, 100));
-            } catch (SQLException e) {
-//            e.printStackTrace();
-            }
-        }
-
-        for (int i = 0; i <= 100; i += step) {
-            try (Connection conn = d.connect(url, null); Statement stmt = conn.createStatement()) {
-                insertCourseTable(stmt, i, Math.min(i + step, 100));
-            } catch (SQLException e) {
-//            e.printStackTrace();
-            }
-        }
-
-        step = 50;
-        for (int i = 0; i <= 100; i += step) {
-            try (Connection conn = d.connect(url, null); Statement stmt = conn.createStatement()) {
-                insertSectionTable(stmt, i, Math.min(i + step, 100));
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+        try (Connection conn = d.connect(url, null); Statement stmt = conn.createStatement()) {
+            insertStudentTable(stmt);
+            insertEnrollTable(stmt);
+            insertDeptTable(stmt);
+            insertCourseTable(stmt);
+            insertSectionTable(stmt);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 

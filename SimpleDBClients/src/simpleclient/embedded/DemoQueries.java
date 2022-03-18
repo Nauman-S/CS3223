@@ -10,9 +10,6 @@ public class DemoQueries {
     }
 
     private static void executeSingleTableQueries(Statement stmt) throws SQLException {
-//        Show a few single table queries that involve distinct, order by, group by and
-//        aggregates; some of these queries should result in using the indexes. Predicates should
-//        include non-equal conditions.
         String[] arr = new String[]{
                 "select sectionid, min(grade), max(grade), count(studentid) from enroll where sectionid > 100 and sectionid < 300 group by sectionid order by sectionid",
                 "select distinct gradyear, sid from student where gradyear < 2019 order by gradyear asc, sid desc",
@@ -37,9 +34,6 @@ public class DemoQueries {
     }
 
     private static void executeTwoWayJoinQueries(Statement stmt) throws SQLException {
-//        Show a few two-way join queries (i.e., queries involving two tables)
-//        o   Do this for different join methods
-
         String[] arr = new String[]{
                 "select sname, dname, majorid from student, dept where majorid=did",
                 "select sname, dname, majorid from student, dept where majorid=did and majorid <=10",
@@ -47,9 +41,7 @@ public class DemoQueries {
                 "select sid, eid from student, enroll where sid = studentid and sid < 3",
                 "select sname, dname from student, dept where majorid = did and majorid <= 30 order by sname",
                 "select sname, grade from student, enroll where sid = studentid and grade = 'A'",
-                // buffer overflow
-//                "select dname, title from dept, course where did = deptid and did = 20 and cid = 112",
-                "select title, prof from course, section where cid = courseid group by title, prof order by prof",
+                "select title, prof from course, section where cid = courseid and cid < 100 group by title, prof order by prof",
         };
         for (String s : arr) {
             executeCmd(stmt, "explain " + s);
@@ -58,18 +50,11 @@ public class DemoQueries {
     }
 
     private static void executeFourWayJoinQueries(Statement stmt) throws SQLException {
-//        Show a few four-way join queries (i.e., queries involving four tables)
-//        o   Do this for different join methods
-
-        // query 0 and 3 failing
-        // query 0 passes without order by
-        // query 3 and 4 failing on null ptr, possible buffer overflow
         String[] arr = new String[]{
-                "select sid, eid, deptid, cid from student, enroll, dept, course where sid = studentid and majorid = did and majorid = deptid order by sid",
-                "select distinct sectid, cid, sid, deptid, gradyear, yearoffered from student, dept, course, section where courseid = cid and yearoffered <= gradyear and did = deptid and cid < 100",
-                "select sectid, deptid, count(cid), count(sid) from student, dept, course, section where courseid = cid and yearoffered = gradyear and did = deptid and sid < 20 group by sectid",
-                "select sname, dname, title, prof from student, dept, course, section where majorid = did and did = deptid and cid = courseid and did < 100 and cid = 22",
-                "select sname, gradyear, grade, title from student, enroll, section, course where sid = studentid and sectionid = sectid and courseid = cid and gradyear >= 2019",
+                "select sid, eid, deptid, cid from student, enroll, dept, course where sid = studentid and majorid = did and majorid = deptid and sid < 10",
+                "select distinct sectid, cid, sid, deptid, gradyear, yearoffered from student, dept, course, section where courseid = cid and yearoffered <= gradyear and did = deptid and cid < 30",
+                "select sname, gradyear, grade, title from student, enroll, section, course where sid = studentid and sectionid = sectid and courseid = cid and gradyear >= 2019 and sid < 15",
+                "select distinct sname, dname from student, dept, course, section where majorid = did and majorid <= 30 and deptid = did and courseid = cid and cid < 40 and sectid < 30 and sid < 10"
         };
         for (String s : arr) {
             executeCmd(stmt, "explain " + s);
